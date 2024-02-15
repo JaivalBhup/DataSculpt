@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
-#THIS IS VITHIKA'S BRANCH
+import pandas as pd
+# Merging everything
 def browse_file():
     file_path = filedialog.askopenfilename()
     if file_path:
