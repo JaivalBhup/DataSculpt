@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
-#Testing Jaival
+# Merging everything
 def browse_file():
     file_path = filedialog.askopenfilename()
     if file_path:
