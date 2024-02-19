@@ -30,4 +30,22 @@ browse_button.pack(pady=10)
 text_widget = tk.Text(root)
 text_widget.pack(expand=True, fill=tk.BOTH)
 
-root.mainloop()
+root.mainloop() #infinite loop until the window is closed
+
+#FOR THE NEXT CODE TO RUN, WE MUST CLOSE THE WINDOW THAT READS THE FILE SELECTED BY THE USER
+
+#load the file the user selected as a csv file
+df = pd.read_csv(file_path)
+#Retrieves a pre-defined feature configuration file to extract all available features
+cfgfile = tsfel.get_features_by_domain()
+
+#Drop all columns that contain string elements
+#For example, the code below is unique to the mock time-series dataset I tested my code on
+#df = df.drop(["Country", "Status"], axis = 1)
+
+#Also, drop all null values of the csv file
+df.dropna(inplace=True)
+
+# Extract features using the tsfel package
+X = tsfel.time_series_features_extractor(cfgfile, df, fs=50, window_size=250)
+print(X) #will print the discrete features onto the terminal
