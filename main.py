@@ -1,7 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog
+import pandas as pd
+import tsfel
 
+#Merging everything
 def browse_file():
+    global file_path
     file_path = filedialog.askopenfilename()
     if file_path:
         # Open the selected file for reading
