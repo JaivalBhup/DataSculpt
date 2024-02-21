@@ -43,7 +43,7 @@ def mytsfel():
 
         #Drop all columns that contain string elements
         #For example, the code below is unique to the mock time-series dataset I tested my code on
-        df = df.drop(["Country", "Status"], axis = 1)
+        #df = df.drop(["Country", "Status"], axis = 1)
 
         #Also, drop all null values of the csv file
         df.dropna(inplace=True)
