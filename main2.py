@@ -26,6 +26,10 @@ def main():
         extractedObject = {}
         current = []
         ans = []
+        settings = { 
+                    "length": None,
+                    "large_standard_deviation": [{"r": 0.05}, {"r": 0.1}]
+                }
         #os.path.isdir to check for directory
         sd = selecteddir.get()
         for subject in os.listdir('./data/'+sd):
@@ -54,7 +58,7 @@ def main():
                    segement_id = int(re.sub("[A-Za-z]","",file.split('.')[0]))
                    data['segement_id'] = segement_id
                    df = df.append(data)
-               extracted_features = extract_features(df, column_id='segement_id', column_sort='TimeStamp(epoch)')
+               extracted_features = extract_features(df, column_id='segement_id', column_sort='TimeStamp(epoch)', default_fc_parameters=settings)
                extracted_features = extracted_features.rename_axis('segement_id')
                extracted_features.to_csv('./extracted/tsfresh_extract_'+subject+"_"+dir+".csv")
                 
