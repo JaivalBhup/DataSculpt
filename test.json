@@ -1,0 +1,107 @@
+{
+    "S007": {
+        "Balance": {
+            "mobileBFT1565632422198.csv": {
+                "mAccelerometerMagnitude(m/s^2)": {
+                    "mean": 0.3649001049541825,
+                    "std": 0.056739621312895686,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                },
+                "mAccelerometerX(m/s^2)": {
+                    "mean": 0.2701627358874663,
+                    "std": 0.11982893992649754,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                },
+                "mAccelerometerY(m/s^2)": {
+                    "mean": 0.16937647622377475,
+                    "std": 0.14759107161137572,
+                    "max_val": 0.9999999999999999,
+                    "min_val": 0.0
+                },
+                "mAccelerometerZ(m/s^2)": {
+                    "mean": 0.1932848484902433,
+                    "std": 0.09416440171139587,
+                    "max_val": 1.0000000000000002,
+                    "min_val": 0.0
+                },
+                "mGyroscopeMagnitude(rad/s)": {
+                    "mean": 0.05119931910397924,
+                    "std": 0.13649917872408493,
+                    "max_val": 0.9999999999999999,
+                    "min_val": 0.0
+                },
+                "mGyroscopeX(rad/s)": {
+                    "mean": 0.7500090860004788,
+                    "std": 0.06515161736411944,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                },
+                "mGyroscopeY(rad/s)": {
+                    "mean": 0.6190981677631923,
+                    "std": 0.08431299876487088,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                },
+                "mGyroscopeZ(rad/s) ": {
+                    "mean": 0.312324275319756,
+                    "std": 0.0877500285738224,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                }
+            },
+            "mobileBTS1565632473674.csv": {
+                "mAccelerometerMagnitude(m/s^2)": {
+                    "mean": 0.18157483229281038,
+                    "std": 0.05142831078147242,
+                    "max_val": 0.9999999999999999,
+                    "min_val": 0.0
+                },
+                "mAccelerometerX(m/s^2)": {
+                    "mean": 0.2715055030705287,
+                    "std": 0.06302295592065255,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                },
+                "mAccelerometerY(m/s^2)": {
+                    "mean": 0.16081785670703955,
+                    "std": 0.04524142546965221,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                },
+                "mAccelerometerZ(m/s^2)": {
+                    "mean": 0.1973652267309078,
+                    "std": 0.06070299893659708,
+                    "max_val": 0.9999999999999999,
+                    "min_val": 0.0
+                },
+                "mGyroscopeMagnitude(rad/s)": {
+                    "mean": 0.0617440147277874,
+                    "std": 0.06519794955323684,
+                    "max_val": 0.9999999999999999,
+                    "min_val": 0.0
+                },
+                "mGyroscopeX(rad/s)": {
+                    "mean": 0.5021675788007073,
+                    "std": 0.10074400623411013,
+                    "max_val": 0.9999999999999999,
+                    "min_val": 0.0
+                },
+                "mGyroscopeY(rad/s)": {
+                    "mean": 0.5798592753669463,
+                    "std": 0.06006859334082365,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                },
+                "mGyroscopeZ(rad/s) ": {
+                    "mean": 0.12762999833843966,
+                    "std": 0.05821671042837724,
+                    "max_val": 1.0,
+                    "min_val": 0.0
+                }
+            }
+        }
+    },
+    ".DS_Store": {}
+}
