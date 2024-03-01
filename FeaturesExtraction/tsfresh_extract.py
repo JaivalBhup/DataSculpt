@@ -26,10 +26,8 @@ def process_folder(folderlink, dir, settings, segement_by_file=False):
 			newCols.append(dir+"_"+col)
 			
 		data.columns = newCols
-		if segement_by_file:
-			segement_id = int(re.sub("[A-Za-z]","",file.split('.')[0]))
-		else:
-			data['segement_id'] = dir
+		segement_id = int(re.sub("[A-Za-z]","",file.split('.')[0]))
+		data['segement_id'] = segement_id
 		#Append all the dataframes into one for same file type 
 		combined_files = combined_files.append(data)
 	extracted_features = extract_features(combined_files, column_id='segement_id', column_sort='TimeStamp(epoch)', default_fc_parameters=settings)
