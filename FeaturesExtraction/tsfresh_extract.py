@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from pathlib import Path
 
-def process_folder(folderlink, dir, settings, segement_by_file=False):
+def process_folder(folderlink, dir, settings):
 	combined_files = pd.DataFrame()
 	for file in os.listdir(folderlink):
 		if file[0] == '.': continue
@@ -35,10 +35,11 @@ def process_folder(folderlink, dir, settings, segement_by_file=False):
 	return extracted_features
 	
 
-def process_and_extract_features(dataFolder):
+def process_and_extract_features(dataFolder, featuresArray):
 	output_dir = Path('./extracted')
 	output_dir.mkdir(parents=True, exist_ok=True)
 	extractedFiles = []
+	features=[]
 	settings = { 
 				"median":None,
 				"mean": None,
@@ -54,9 +55,11 @@ def process_and_extract_features(dataFolder):
 		if subject[0] == '.': continue
 		mainDf = pd.DataFrame()
 		extracted_features = pd.DataFrame()
+
 		# Loop through every directory
 		for dir in os.listdir('../data/'+dataFolder+'/'+subject):
 			if dir[0] == '.': continue
+			if dir not in featuresArray: continue
 			extracted_features = process_folder('../data/'+dataFolder+'/'+subject+"/"+dir, dir,settings)
 			# Merge all the extracted feature into one big dataframe
 			if not mainDf.empty:
@@ -64,8 +67,9 @@ def process_and_extract_features(dataFolder):
 			else:
 				mainDf = extracted_features
 		#Save that dataframe
+		features = mainDf.columns
 		mainDf.to_csv('./extracted/tsfresh_extract_'+subject+".csv")
 		extractedFiles.append('tsfresh_extract_'+subject+".csv")
 
-	return extractedFiles
+	return {"extractedFiles":extractedFiles, 'features': features}
 	

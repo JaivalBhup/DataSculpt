@@ -3,6 +3,87 @@ import tkinter as tk
 from FeaturesExtraction.tsfresh_extract import process_and_extract_features as ts_process_and_extract_features
 
 def main():
+    def make_file_button(dir):
+        button = tk.Button(
+            file_frame, text=dir, name=dir, command=lambda dir=dir: dirSelectedPressed(dir)
+        )
+        button.config(bg="lightgrey", activebackground="lightblue")  # Set default and active colors
+        return button
+    
+    root = tk.Tk()
+    root.title("DataSculpt")
+
+    # Use grid for more structured layout
+    top_frame = tk.Frame(root)
+    top_frame.grid(row=1, column=0, columnspan=2)  # Span across both columns
+    file_frame = tk.Frame(root)
+    file_frame.grid(row=2, column=0, sticky=tk.N+tk.S) 
+    # dir_frame = tk.Frame(root)
+    # dir_frame.grid(row=1, column=0, sticky=tk.N+tk.S)  # Stick to top and bottom
+    dir_frame = tk.Frame(root)
+    dir_frame.grid(row=3, column=0, sticky=tk.N+tk.S)  # Expand as needed
+
+    selecteddir = tk.StringVar(master=root)
+    dirSelected = tk.BooleanVar(master=root)
+    selectedFeatures = tk.StringVar(master=root)
+    for dir in os.listdir("./data/"):
+        if len(dir.split(".")) == 1:
+            file_button = make_file_button(dir)
+            file_button.pack(side='left',padx=5, pady=10) 
+    file_widget = tk.Text(root, height=5, width=40)
+    file_widget.grid(row=4,rowspan=2, column=0, sticky=tk.N+tk.S+tk.W)  # Stick to top, bottom, and left
+    text_widget = tk.Text(root)
+    text_widget.grid(row=5, column=1, sticky=tk.N+tk.S+tk.E+tk.W)  # Expand in both directions
+    def ts_extract_features():
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, 'Extracting Features ....')
+        dirArray = selectedFeatures.get().split(',')
+        sd = selecteddir.get()
+        if sd=='': return
+        if dirArray[0] == '':return
+        objj = ts_process_and_extract_features(sd, dirArray)
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, f'''Files Extracted:\n {', '.join(objj['extractedFiles'])}\n\n Features: {str(objj['features'])}''')
+
+    extract_button = tk.Button(top_frame, text="Extract data (TSFresh)", command=ts_extract_features)
+    extract_button.pack(side='left', padx=5, pady=10)
+
+    def make_dir_buttons(data):
+        robj = {"subjects":[], "dirs":[]}
+        gotdirs = False
+        for sub in os.listdir('./data/'+data):
+            if sub[0] != '.': robj["subjects"].append(sub)
+            if gotdirs: continue
+            for dir in os.listdir('./data/'+data+'/'+sub):
+
+                if dir[0] != '.':
+                    robj["dirs"].append(dir)
+                    gotdirs = True
+                    button = tk.Button(
+                        dir_frame, text=dir, name=dir.lower(), command=lambda dir=dir: updatedDirs(dir)
+                    )
+                    button.config(bg="lightgrey", activebackground="lightblue")  # Set default and active colors
+                    button.pack(side='left',padx=5, pady=10) 
+        selectedFeatures.set(",".join(robj["dirs"]))
+        return robj
+
+    def updatedDirs(dir):
+        dirArray = selectedFeatures.get().split(',')
+        if len(dirArray)>=1 and dirArray[0] != '':
+            if dir in dirArray:
+                dirArray.remove(dir)
+            else: 
+                dirArray.append(dir)
+            selectedFeatures.set(','.join(dirArray))
+            file_widget.delete(3.0, tk.END)
+            file_widget.insert(3.0, f'''\nFeatures Extracted on: \n {", ".join(dirArray)}''')
+        else:
+            selectedFeatures.set(dir)
+            file_widget.delete(3.0, tk.END)
+            file_widget.insert(3.0, f'''\nFeatures Extracted on: \n {dir}''')
+
+        
+
     def dirSelectedPressed(dir):
         if selecteddir.get() == dir:
             selecteddir.set('')
@@ -10,36 +91,11 @@ def main():
             file_widget.delete(1.0, tk.END)
         else:
             selecteddir.set(dir)
+            obj = make_dir_buttons(dir)
             dirSelected.set(True)
             file_widget.delete(1.0, tk.END)
-            file_widget.insert(1.0, "Selected Data Source: "+selecteddir.get())
-
-    def ts_extract_features():
-        sd = selecteddir.get()
-        if sd=='': return
-        print(ts_process_and_extract_features(sd))
-
-    #main window
-    root = tk.Tk()
-    root.title("DataSculpt")
-    selecteddir = tk.StringVar(master=root)
-    dirSelected = tk.BooleanVar(master=root)
-    top_frame = tk.Frame(root)
-    top_frame.pack(side=tk.TOP)
-    file_frame = tk.Frame(root)
-    file_frame.pack(side=tk.TOP)
-    sub_frame = tk.Frame(root)
-    sub_frame.pack(side=tk.TOP)
-    for dir in os.listdir("./data/"):
-        if len(dir.split(".")) == 1:
-            file_button = tk.Button(file_frame, text=dir,name=dir, command=lambda dir=dir: dirSelectedPressed(dir))
-            file_button.pack(side='left', padx=5, pady=10)
-    file_widget = tk.Text(root, height=5, width=40)
-    file_widget.pack(expand=True)
-    extract_button = tk.Button(top_frame, text="Extract data (TSFresh)", command=ts_extract_features)
-    extract_button.pack(side='left', padx=5, pady=10)
-    text_widget = tk.Text(root)
-    text_widget.pack(expand=True, fill=tk.BOTH)
+            file_widget.insert(1.0, f'''Subjects Found: \n {", ".join(obj['subjects'])}\n''')
+            file_widget.insert(3.0, f'''Features Extracted on: \n {", ".join(obj['dirs'])}''')
 
     root.mainloop()
 
