@@ -1,63 +1,122 @@
+import os
 import tkinter as tk
-from tkinter import filedialog
-import pandas as pd
-import tsfel
+from tsfresh_extract import process_and_extract_features as ts_process_and_extract_features
+from tsfel_extract import process_and_extract_features as tsfel_process_and_extract_features
 
-#Merging everything
-def browse_file():
-    global file_path #path directory is global as we will need it later to derive the discrete stats
-    file_path = filedialog.askopenfilename()
-    if file_path:
-        # Open the selected file for reading
-        with open(file_path, 'r') as file:
-            # Read the contents of the file
-            file_contents = file.read()
-            #Display the file contents in a text widget
-            text_widget.delete(1.0, tk.END)
-            text_widget.insert(tk.END, file_contents)
-    else:
-        file_label.config(text="No file selected")
+#REMEMBER TO CHANGE ALL PATH DIRECTORIES IN MY CODE TO YOUR DISTINCT PATH DIRECTORY
 
-#main window
-root = tk.Tk()
-root.title("DataSculpt")
+def main():
+    def make_file_button(dir):
+        button = tk.Button(
+            file_frame, text=dir, name=dir, command=lambda dir=dir: dirSelectedPressed(dir)
+        )
+        button.config(bg="lightgrey", activebackground="lightblue")  # Set default and active colors
+        return button
+    
+    root = tk.Tk()
+    root.title("DataSculpt")
 
-# Top Label
-file_label = tk.Label(root, text="Test")
-file_label.pack(pady=10)
+    # Use grid for more structured layout
+    top_frame = tk.Frame(root)
+    top_frame.grid(row=1, column=0, columnspan=2)  # Span across both columns
+    file_frame = tk.Frame(root)
+    file_frame.grid(row=2, column=0, sticky=tk.N+tk.S) 
+    # dir_frame = tk.Frame(root)
+    # dir_frame.grid(row=1, column=0, sticky=tk.N+tk.S)  # Stick to top and bottom
+    dir_frame = tk.Frame(root)
+    dir_frame.grid(row=3, column=0, sticky=tk.N+tk.S)  # Expand as needed
 
-# Our Button
-browse_button = tk.Button(root, text="Choose your file", command=browse_file)
-browse_button.pack(pady=10)
+    selecteddir = tk.StringVar(master=root)
+    dirSelected = tk.BooleanVar(master=root)
+    selectedFeatures = tk.StringVar(master=root)
+    for dir in os.listdir("C:/Users/jamir\Downloads/2024 - CS multimodal data/"):
+        if len(dir.split(".")) == 1:
+            file_button = make_file_button(dir)
+            file_button.pack(side='left',padx=5, pady=10) 
+    file_widget = tk.Text(root, height=5, width=40)
+    file_widget.grid(row=4,rowspan=2, column=0, sticky=tk.N+tk.S+tk.W)  # Stick to top, bottom, and left
+    text_widget = tk.Text(root)
+    text_widget.grid(row=5, column=1, sticky=tk.N+tk.S+tk.E+tk.W)  # Expand in both directions
+    def ts_extract_features():
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, 'Extracting Features ....')
+        dirArray = selectedFeatures.get().split(',')
+        sd = selecteddir.get()
+        if sd=='': return
+        if dirArray[0] == '':return
+        objj = ts_process_and_extract_features(sd, dirArray)
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, f'''Files Extracted:\n {', '.join(objj['extractedFiles'])}\n\n Features: {str(objj['features'])}''')
 
-# Data Display (Simple text widget for now)
-text_widget = tk.Text(root)
-text_widget.pack(expand=True, fill=tk.BOTH)
+    #NOW IMPLEMENTING TSFFEL EXTRACT FEATURES
+    def tsfel_extract_features():
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, 'Extracting Features ....')
+        dirArray = selectedFeatures.get().split(',')
+        sd = selecteddir.get()
+        if sd=='': return
+        if dirArray[0] == '':return
+        objj = tsfel_process_and_extract_features(sd, dirArray)
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, f'''Files Extracted:\n {', '.join(objj['extractedFiles'])}\n\n Features: {str(objj['features'])}''')
 
-def mytsfel():
-    #load the file the user selected as a csv file
-    df = pd.read_csv(file_path)
-    if browse_file:
-        #Retrieves a pre-defined feature configuration file to extract all available features
-        cfgfile = tsfel.get_features_by_domain()
 
-        #Drop all columns that contain string elements
-        #For example, the code below is unique to the mock time-series dataset I tested my code on
-        #df = df.drop(["Country", "Status"], axis = 1)
+    extract_button = tk.Button(top_frame, text="Extract data (TSFresh)", command=ts_extract_features)
+    extract_button.pack(side='left', padx=5, pady=10)
 
-        #Also, drop all null values of the csv file
-        df.dropna(inplace=True)
+    extract_button1 = tk.Button(top_frame, text="Extract data (TSFel)", command=tsfel_extract_features)
+    extract_button1.pack(side='right', padx=5, pady=10)
 
-        # Extract features using the tsfel package
-        X = tsfel.time_series_features_extractor(cfgfile, df, fs=50, window_size=250)
-        text_widget.delete(1.0,tk.END)
-        text_widget.insert(1.0,X)
-        print('\nExtracted arrays:')
-        print(X) #will print the discrete features onto th
+    def make_dir_buttons(data):
+        robj = {"subjects":[], "dirs":[]}
+        gotdirs = False
+        for sub in os.listdir('C:/Users/jamir/Downloads/2024 - CS multimodal data/'+data):
+            if sub[0] != '.': robj["subjects"].append(sub)
+            if gotdirs: continue
+            for dir in os.listdir('C:/Users/jamir/Downloads/2024 - CS multimodal data/'+data+'/'+sub):
 
-#Adds a button to the main window that calls the command that extracts the discrete values from the time series using the tsfel package
-#Will read the extracted info onto the window and terminal
-extract_button = tk.Button(root, text = 'Extract data', command = mytsfel)
-extract_button.pack(pady=10)
+                if dir[0] != '.':
+                    robj["dirs"].append(dir)
+                    gotdirs = True
+                    button = tk.Button(
+                        dir_frame, text=dir, name=dir.lower(), command=lambda dir=dir: updatedDirs(dir)
+                    )
+                    button.config(bg="lightgrey", activebackground="lightblue")  # Set default and active colors
+                    button.pack(side='left',padx=5, pady=10) 
+        selectedFeatures.set(",".join(robj["dirs"]))
+        return robj
 
-root.mainloop() #infinite loop until the window is closed
+    def updatedDirs(dir):
+        dirArray = selectedFeatures.get().split(',')
+        if len(dirArray)>=1 and dirArray[0] != '':
+            if dir in dirArray:
+                dirArray.remove(dir)
+            else: 
+                dirArray.append(dir)
+            selectedFeatures.set(','.join(dirArray))
+            file_widget.delete(3.0, tk.END)
+            file_widget.insert(3.0, f'''\nFeatures Extracted on: \n {", ".join(dirArray)}''')
+        else:
+            selectedFeatures.set(dir)
+            file_widget.delete(3.0, tk.END)
+            file_widget.insert(3.0, f'''\nFeatures Extracted on: \n {dir}''')
+
+        
+
+    def dirSelectedPressed(dir):
+        if selecteddir.get() == dir:
+            selecteddir.set('')
+            dirSelected.set(False)
+            file_widget.delete(1.0, tk.END)
+        else:
+            selecteddir.set(dir)
+            obj = make_dir_buttons(dir)
+            dirSelected.set(True)
+            file_widget.delete(1.0, tk.END)
+            file_widget.insert(1.0, f'''Subjects Found: \n {", ".join(obj['subjects'])}\n''')
+            file_widget.insert(3.0, f'''Features Extracted on: \n {", ".join(obj['dirs'])}''')
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
