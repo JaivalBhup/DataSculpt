@@ -20,22 +20,7 @@ def process_folder(folderlink, dir, settings):
 		for col in object_cols.columns:
 			data[col] = le.fit_transform(data[col])
 		#Seperate column names for conflicting column names
-		newCols = []
-		for col in data.columns:
-			if col == 'TimeStamp(epoch)': 
-				newCols.append('TimeStamp(epoch)')
-				continue
-			newCols.append(dir+"_"+col)
-			
-		data.columns = newCols
 		data.drop(['TimeStamp(epoch)'], axis=1, inplace=True)
-		#print(data)
-		#Append all the dataframes into one for same file type 
-		#combined_files = combined_files.append(data)
-		
-		# combined_files1 = combined_files.values.tolist()
-		# print(combined_files1)
-		#combined_files = pd.DataFrame(combined_files.T.reshape(2, -1), columns=combined_files.columns)
 		extracted_features =   calc_features(wind_sig=data, dict_features=sett, fs=None)
 	# extracted_features =   time_series_features_extractor(dict_features=sett, signal_windows= data,fs=None)
 		extracted_features.insert(0, 'segement_id',file)

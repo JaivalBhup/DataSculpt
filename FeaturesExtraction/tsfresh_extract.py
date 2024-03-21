@@ -17,15 +17,6 @@ def process_folder(folderlink, dir, settings):
 		le = LabelEncoder()
 		for col in object_cols.columns:
 			data[col] = le.fit_transform(data[col])
-		#Seperate column names for conflicting column names
-		newCols = []
-		for col in data.columns:
-			if col == 'TimeStamp(epoch)': 
-				newCols.append('TimeStamp(epoch)')
-				continue
-			newCols.append(dir+"_"+col)
-			
-		data.columns = newCols
 		# segement_id = int(re.sub("[A-Za-z]","",file.split('.')[0]))
 		segement_id = file
 		data['segement_id'] = segement_id
