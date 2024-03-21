@@ -1,7 +1,7 @@
 import os
 import tkinter as tk
-from FeaturesExtraction.tsfresh_extract import process_and_extract_features as ts_process_and_extract_features
-
+from FeaturesExtraction.tsfresh_extract import process_and_extract_features as tsfresh_process_and_extract_features
+from FeaturesExtraction.tsfel_extract import process_and_extract_features as tsfel_process_and_extract_features
 def main():
     def make_file_button(dir):
         button = tk.Button(
@@ -34,19 +34,32 @@ def main():
     file_widget.grid(row=4,rowspan=2, column=0, sticky=tk.N+tk.S+tk.W)  # Stick to top, bottom, and left
     text_widget = tk.Text(root)
     text_widget.grid(row=5, column=1, sticky=tk.N+tk.S+tk.E+tk.W)  # Expand in both directions
-    def ts_extract_features():
+    def tsfresh_extract_features():
         text_widget.delete(1.0, tk.END)
         text_widget.insert(1.0, 'Extracting Features ....')
         dirArray = selectedFeatures.get().split(',')
         sd = selecteddir.get()
         if sd=='': return
         if dirArray[0] == '':return
-        objj = ts_process_and_extract_features(sd, dirArray)
+        objj = tsfresh_process_and_extract_features(sd, dirArray)
         text_widget.delete(1.0, tk.END)
         text_widget.insert(1.0, f'''Files Extracted:\n {', '.join(objj['extractedFiles'])}\n\n Features: {str(objj['features'])}''')
 
-    extract_button = tk.Button(top_frame, text="Extract data (TSFresh)", command=ts_extract_features)
-    extract_button.pack(side='left', padx=5, pady=10)
+    def tsfel_extract_features():
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, 'Extracting Features ....')
+        dirArray = selectedFeatures.get().split(',')
+        sd = selecteddir.get()
+        if sd=='': return
+        if dirArray[0] == '':return
+        objj = tsfel_process_and_extract_features(sd, dirArray)
+        text_widget.delete(1.0, tk.END)
+        text_widget.insert(1.0, f'''Files Extracted:\n {', '.join(objj['extractedFiles'])}\n\n Features: {str(objj['features'])}''')
+
+    tsfresh_extract_button = tk.Button(top_frame, text="Extract Features (TSFresh)", command=tsfresh_extract_features)
+    tsfresh_extract_button.pack(side='left', padx=5, pady=10)
+    tsfel_extract_button = tk.Button(top_frame, text="Extract Features (TSFEL)", command=tsfel_extract_features)
+    tsfel_extract_button.pack(side='left', padx=5, pady=10)
 
     def make_dir_buttons(data):
         robj = {"subjects":[], "dirs":[]}
