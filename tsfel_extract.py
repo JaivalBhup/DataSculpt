@@ -28,7 +28,7 @@ def process_folder(folderlink, dir, settings):
 			newCols.append(dir+"_"+col)
 			
 		data.columns = newCols
-		segement_id = int(re.sub("[A-Za-z]","",file.split('.')[0]))
+		segement_id = file
 		data['segement_id'] = segement_id
 		#print(data)
 		#Append all the dataframes into one for same file type 
@@ -40,6 +40,7 @@ def process_folder(folderlink, dir, settings):
 	
 	extracted_features = calc_features(wind_sig=combined_files1, dict_features=sett, fs=None, kwargs='TimeStamp(epoch)')
 	extracted_features = extracted_features.rename_axis('segement_id')
+
 	print(settings)
 	return extracted_features
 	
@@ -71,13 +72,17 @@ def process_and_extract_features(dataFolder, featuresArray):
 			if dir not in featuresArray: continue
 			extracted_features = process_folder('C:/Users/jamir/Downloads/2024 - CS multimodal data/'+dataFolder+'/'+subject+"/"+dir, dir,settings)
 			# Merge all the extracted feature into one big dataframe
-			if not mainDf.empty:
-				mainDf = mainDf.merge(extracted_features, on="segement_id", how='outer')
-			else:
-				mainDf = extracted_features
+			features = extracted_features.columns
+			extracted_features.to_csv('C:/Users/jamir/Downloads/extracted/tsfel_extract_'+subject+'_'+dir+'.csv')
+			extractedFiles.append('tsfel_extract_'+subject+'_'+dir+".csv")
+
+			#if not mainDf.empty:
+			#	mainDf = mainDf.merge(extracted_features, on="segement_id", how='outer')
+			#else:
+			#	mainDf = extracted_features
 		#Save that dataframe
-		features = mainDf.columns
-		mainDf.to_csv("C:/Users/jamir/Downloads/extracted/tsfel_extract_"+subject+".csv")
-		extractedFiles.append('tsfel_extract_'+subject+".csv")
+		#features = mainDf.columns
+		#mainDf.to_csv("C:/Users/jamir/Downloads/extracted/tsfel_extract_"+subject+".csv")
+		#extractedFiles.append('tsfel_extract_'+subject+".csv")
 
 	return {"extractedFiles":extractedFiles, 'features': features}
